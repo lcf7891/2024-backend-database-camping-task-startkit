@@ -28,9 +28,9 @@
     SET role = 'COACH'
     WHERE email
     IN (
-    'lee2000@hexschooltest.io',
-    'muscle@hexschooltest.io',
-    'starplatinum@hexschooltest.io'
+      'lee2000@hexschooltest.io',
+      'muscle@hexschooltest.io',
+      'starplatinum@hexschooltest.io'
     )
     AND role = 'USER';
 
@@ -259,10 +259,10 @@
 -- 5-6. 查詢：計算用戶王小明的購買堂數，顯示須包含以下欄位： user_id , total。 (需使用到 SUM 函式與 Group By)
     SELECT
       "USER".name AS 學員,
-      SUM("COURSE_BOOKING".course_id) AS total
-    FROM "COURSE_BOOKING"
-    INNER JOIN "USER" ON "COURSE_BOOKING".user_id = "USER".id
-    WHERE "COURSE_BOOKING".user_id = (SELECT id FROM "USER" WHERE name = '王小明')
+      SUM("CREDIT_PURCHASE".purchased_credits) AS 購買堂數
+    FROM "CREDIT_PURCHASE"
+    INNER JOIN "USER" ON "CREDIT_PURCHASE".user_id = "USER".id
+    WHERE "CREDIT_PURCHASE".user_id = (SELECT id FROM "USER" WHERE name = '王小明')
     GROUP BY "USER".name;
 
 -- 5-7. 查詢：計算用戶王小明的已使用堂數，顯示須包含以下欄位： user_id , total。 (需使用到 Count 函式與 Group By)
@@ -282,20 +282,21 @@
     -- inner join ( 用戶王小明的已使用堂數) as "COURSE_BOOKING"
     -- on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
     SELECT 
-      name AS 學員名稱,
+      name AS 學員,
       (
         SELECT
-          SUM("CREDIT_PURCHASE".purchased_credits) AS "購買堂數" 
-        FROM "USER"
-        INNER JOIN "CREDIT_PURCHASE" ON "USER".id = "CREDIT_PURCHASE".user_id
-        WHERE "USER".name = '王小明'
+          SUM("CREDIT_PURCHASE".purchased_credits) AS 購買堂數
+        FROM "CREDIT_PURCHASE"
+        INNER JOIN "USER" ON "CREDIT_PURCHASE".user_id = "USER".id
+        WHERE "CREDIT_PURCHASE".user_id = (SELECT id FROM "USER" WHERE name = '王小明')
         GROUP BY "USER".name
       ) - (
-        SELECT 
-          COUNT("COURSE_BOOKING".status) AS 已使用堂數
-        FROM "USER"
-        INNER JOIN "COURSE_BOOKING" ON "USER".id = "COURSE_BOOKING".user_id
-        WHERE "USER".name = '王小明' AND "COURSE_BOOKING".status = '上課中'
+        SELECT
+          count("COURSE_BOOKING".status) AS 已使用堂數 
+        FROM "COURSE_BOOKING"
+        INNER JOIN "USER" ON "COURSE_BOOKING".user_id = "USER".id
+        WHERE "COURSE_BOOKING".user_id = (SELECT id FROM "USER" WHERE name = '王小明')
+        AND "COURSE_BOOKING".status = '上課中'
         GROUP BY "USER".name
       ) AS 剩餘可用堂數
     FROM "USER"
