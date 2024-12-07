@@ -281,6 +281,26 @@ GROUP BY "USER".name;
     -- from ( 用戶王小明的購買堂數 ) as "CREDIT_PURCHASE"
     -- inner join ( 用戶王小明的已使用堂數) as "COURSE_BOOKING"
     -- on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
+    SELECT 
+      name AS 學員名稱,
+      (
+        SELECT
+          SUM("CREDIT_PURCHASE".purchased_credits) AS "購買堂數" 
+        FROM "USER"
+        INNER JOIN "CREDIT_PURCHASE" ON "USER".id = "CREDIT_PURCHASE".user_id
+        WHERE "USER".name = '王小明'
+        GROUP BY "USER".name
+      ) - (
+        SELECT 
+          COUNT("COURSE_BOOKING".status) AS 已使用堂數
+        FROM "USER"
+        INNER JOIN "COURSE_BOOKING" ON "USER".id = "COURSE_BOOKING".user_id
+        WHERE "USER".name = '王小明' AND "COURSE_BOOKING".status = '上課中'
+        GROUP BY "USER".name
+      )
+      AS 剩餘可用堂數
+    FROM "USER"
+    WHERE name = '王小明';
 
 
 -- ████████  █████   █     ███  
@@ -328,12 +348,12 @@ GROUP BY "USER".name;
 -- 6-4. 查詢：計算 11 月份總營收（使用 purchase_at 欄位統計）
 -- 顯示須包含以下欄位： 總營收
     SELECT
-      cpa.name  AS 組合包方案名稱,
-      SUM(cpu.price_paid) AS 銷售數量
-    FROM "CREDIT_PURCHASE" cpu
-    INNER JOIN "CREDIT_PACKAGE" cpa ON  cpu.credit_package_id = cpa.id
-    WHERE cpu.purchase_at BETWEEN '2024-11-01' AND '2024-11-30'
-    GROUP BY cpa.name;
+      "CREDIT_PACKAGE".name  AS 組合包方案名稱,
+      SUM("CREDIT_PURCHASE".price_paid) AS 銷售數量
+    FROM "CREDIT_PURCHASE"
+    INNER JOIN "CREDIT_PACKAGE" ON  "CREDIT_PURCHASE".credit_package_id = "CREDIT_PACKAGE".id
+    WHERE "CREDIT_PURCHASE".purchase_at BETWEEN '2024-11-01' AND '2024-11-30'
+    GROUP BY "CREDIT_PACKAGE".name;
 
 -- 6-5. 查詢：計算 11 月份有預約課程的會員人數（需使用 Distinct，並用 created_at 和 status 欄位統計）
 -- 顯示須包含以下欄位： 預約會員人數
