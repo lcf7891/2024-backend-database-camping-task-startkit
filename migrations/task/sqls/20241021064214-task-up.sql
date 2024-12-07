@@ -287,12 +287,12 @@
         SELECT
           SUM(purchased_credits) AS 購買堂數
         FROM "CREDIT_PURCHASE"
-        WHERE user_id = (SELECT id FROM "USER" WHERE name = '王小明')
+        WHERE user_id = "USER".id
       ) - (
         SELECT
           count(status) AS 已使用堂數
         FROM "COURSE_BOOKING"
-        WHERE user_id = (SELECT id FROM "USER" WHERE name = '王小明')
+        WHERE user_id = "USER".id
         AND status != '課程已取消'
       ) AS 剩餘可用堂數
     FROM "USER"
