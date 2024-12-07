@@ -281,19 +281,19 @@
     -- from ( 用戶王小明的購買堂數 ) as "CREDIT_PURCHASE"
     -- inner join ( 用戶王小明的已使用堂數) as "COURSE_BOOKING"
     -- on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
-    SELECT 
+    SELECT
       name AS 學員,
       (
         SELECT
-          SUM("CREDIT_PURCHASE".purchased_credits) AS 購買堂數
+          SUM(purchased_credits) AS 購買堂數
         FROM "CREDIT_PURCHASE"
-        WHERE "CREDIT_PURCHASE".user_id = (SELECT id FROM "USER" WHERE name = '王小明')
+        WHERE user_id = (SELECT id FROM "USER" WHERE name = '王小明')
       ) - (
         SELECT
-          count("COURSE_BOOKING".status) AS 已使用堂數
+          count(status) AS 已使用堂數
         FROM "COURSE_BOOKING"
-        WHERE "COURSE_BOOKING".user_id = (SELECT id FROM "USER" WHERE name = '王小明')
-        AND "COURSE_BOOKING".status != '課程已取消'
+        WHERE user_id = (SELECT id FROM "USER" WHERE name = '王小明')
+        AND status != '課程已取消'
       ) AS 剩餘可用堂數
     FROM "USER"
     WHERE name = '王小明';
