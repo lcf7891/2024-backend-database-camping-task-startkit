@@ -334,7 +334,7 @@
 -- 6-3. 查詢：計算 11 月份組合包方案的銷售數量
 -- 顯示須包含以下欄位： 組合包方案名稱, 銷售數量
     SELECT
-      "CREDIT_PACKAGE".name  AS 組合包方案名稱,
+      "CREDIT_PACKAGE".name AS 組合包方案名稱,
       COUNT("CREDIT_PURCHASE".credit_package_id) AS 銷售數量
     FROM "CREDIT_PURCHASE"
     INNER JOIN "CREDIT_PACKAGE" ON  "CREDIT_PURCHASE".credit_package_id = "CREDIT_PACKAGE".id
