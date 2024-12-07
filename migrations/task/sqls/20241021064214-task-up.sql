@@ -297,8 +297,7 @@
         INNER JOIN "COURSE_BOOKING" ON "USER".id = "COURSE_BOOKING".user_id
         WHERE "USER".name = '王小明' AND "COURSE_BOOKING".status = '上課中'
         GROUP BY "USER".name
-      )
-      AS 剩餘可用堂數
+      ) AS 剩餘可用堂數
     FROM "USER"
     WHERE name = '王小明';
 
